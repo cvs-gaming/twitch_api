@@ -1,5 +1,6 @@
 # Twitch Api
 
+https://hexdocs.pm/twitch_api
 
 ## Installation
 
