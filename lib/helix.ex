@@ -129,4 +129,25 @@ defmodule TwitchApi.Helix do
         false
     end
   end
+
+  @doc """
+  Create a channel points icon on a channel
+  """
+  def create_channel_points_custom_reward(client_id, user_access_token, user_id, title, cost) when is_bitstring(cost) do
+    headers = [
+      {"Content-Type", "application/json"},
+      {"Client-Id", client_id},
+      {"Authorization", "Bearer #{user_access_token}"},
+    ]
+
+    body = %{
+      title: title,
+      cost: cost,
+    }
+
+    case HTTPoison.post("https://api.twitch.tv/helix/channel_points/custom_rewards?broadcaster_id=#{user_id}", Jason.encode!(body), headers) do
+      {:ok, %HTTPoison.Response{body: body}} -> {:ok, Jason.decode!(body)}
+      nil -> {:error, "Something went wrong."}
+    end
+  end
 end
