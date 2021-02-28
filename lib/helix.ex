@@ -97,4 +97,36 @@ defmodule TwitchApi.Helix do
       _ -> true
     end
   end
+
+  @doc """
+  Is the user or streamer live?
+  """
+  def is_live?(user_access_token, client_id, user_id) do
+    HTTPoison.start()
+
+    headers = [
+      {"Client-Id", client_id},
+      {"Authorization", "Bearer #{user_access_token}"}
+    ]
+
+    response =
+      HTTPoison.get(
+        "https://api.twitch.tv/helix/streams?user_id=#{user_id}",
+        headers
+      )
+
+    case response do
+      {:ok, %HTTPoison.Response{body: body}} ->
+        case Jason.decode!(body) do
+          %{"data" => [%{"type" => "live"}]} ->
+            true
+
+          _ ->
+            false
+        end
+
+      _ ->
+        false
+    end
+  end
 end
