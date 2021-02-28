@@ -1,6 +1,7 @@
 defmodule TwitchApi.Helix do
   @moduledoc """
-  Documentation for the Twitch API.
+  The Twitch API
+
   Twitch API version: Helix
   """
 
@@ -31,8 +32,9 @@ defmodule TwitchApi.Helix do
   end
 
   @doc """
-  Get information about the user by their id (channel id)
+  Get information about the user by their id (channel)
 
+  ```
   {
     :ok,
      %{
@@ -53,6 +55,7 @@ defmodule TwitchApi.Helix do
      ]
     }}
   }
+  ```
   """
   def get_user_info_by_user_id!(user_access_token, client_id, user_id) do
     HTTPoison.start()

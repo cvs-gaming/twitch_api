@@ -1,24 +1,33 @@
 defmodule TwitchApi.EventSub do
   @moduledoc """
-  Documentation for Twitch EventSub
+  Start using Twitch EventSub
 
   You can test all your subscriptions using:
+
   https://github.com/twitchdev/twitch-cli/blob/main/docs/event.md#verify-subscription
   """
 
   @doc """
+  Start listening to follows
+
   https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#channelfollow
   """
   def listen_to_follows(client_id, app_access_token, callback_url, secret, channel) do
     listen(client_id, app_access_token, callback_url, secret, channel, "channel.follow")
   end
 
+  @doc """
+  Stop listening to follows
+  """
   def stop_listening_to_follows(client_id, app_access_token, subscription_id) do
     stop_listening(client_id, app_access_token, subscription_id)
   end
 
   @doc """
+  Start listening to subscriptions
+
   https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#channelsubscribe
+
   Scopes required: channel:read:subscriptions
 
   Test using the twitch cli:
@@ -28,34 +37,50 @@ defmodule TwitchApi.EventSub do
     listen(client_id, app_access_token, callback_url, secret, channel, "channel.subscribe")
   end
 
+  @doc """
+  Stop listening to subscriptions
+  """
   def stop_listening_to_subscriptions(client_id, app_access_token, subscription_id) do
     stop_listening(client_id, app_access_token, subscription_id)
   end
 
   @doc """
+  Start listening to when the streamer comes online
+
   https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#streamonline
   """
   def listen_to_stream_online(client_id, app_access_token, callback_url, secret, channel) do
     listen(client_id, app_access_token, callback_url, secret, channel, "stream.online")
   end
 
+  @doc """
+  Stop listening to when the streamer comes online
+  """
   def stop_listening_to_stream_online(client_id, app_access_token, subscription_id) do
     stop_listening(client_id, app_access_token, subscription_id)
   end
 
   @doc """
+  Start listening to when the streamer goes offline
+
   https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#streamoffline
   """
   def listen_to_stream_offline(client_id, app_access_token, callback_url, secret, channel) do
     listen(client_id, app_access_token, callback_url, secret, channel, "stream.offline")
   end
 
+  @doc """
+  Stop listening to when the streamer goes offline
+  """
   def stop_listening_to_stream_offline(client_id, app_access_token, subscription_id) do
     stop_listening(client_id, app_access_token, subscription_id)
   end
 
   @doc """
+  Start listening to channel points usage
+
   https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#channelchannel_points_custom_reward_redemptionadd
+
   Scopes required: channel:read:redemptions or channel:manage:redemptions
   """
   def listen_to_channel_points_used(client_id, app_access_token, callback_url, secret, channel) do
@@ -69,6 +94,9 @@ defmodule TwitchApi.EventSub do
     )
   end
 
+  @doc """
+  Stop listening to channel points usage
+  """
   def stop_listening_to_channel_points_used(client_id, app_access_token, subscription_id) do
     stop_listening(client_id, app_access_token, subscription_id)
   end
@@ -116,6 +144,11 @@ defmodule TwitchApi.EventSub do
     )
   end
 
+  @doc """
+  List all event sub listeners
+
+  There is a maximum, so make sure to stop listening at some point
+  """
   def list_event_subs(client_id, app_access_token) do
     HTTPoison.start()
 
