@@ -17,13 +17,6 @@ defmodule TwitchApi.EventSub do
   end
 
   @doc """
-  Stop listening to follows
-  """
-  def stop_listening_to_follows(client_id, app_access_token, subscription_id) do
-    stop_listening(client_id, app_access_token, subscription_id)
-  end
-
-  @doc """
   Start listening to subscriptions
 
   https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#channelsubscribe
@@ -38,13 +31,6 @@ defmodule TwitchApi.EventSub do
   end
 
   @doc """
-  Stop listening to subscriptions
-  """
-  def stop_listening_to_subscriptions(client_id, app_access_token, subscription_id) do
-    stop_listening(client_id, app_access_token, subscription_id)
-  end
-
-  @doc """
   Start listening to when the streamer comes online
 
   https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#streamonline
@@ -54,26 +40,12 @@ defmodule TwitchApi.EventSub do
   end
 
   @doc """
-  Stop listening to when the streamer comes online
-  """
-  def stop_listening_to_stream_online(client_id, app_access_token, subscription_id) do
-    stop_listening(client_id, app_access_token, subscription_id)
-  end
-
-  @doc """
   Start listening to when the streamer goes offline
 
   https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#streamoffline
   """
   def listen_to_stream_offline(client_id, app_access_token, callback_url, secret, channel) do
     listen(client_id, app_access_token, callback_url, secret, channel, "stream.offline")
-  end
-
-  @doc """
-  Stop listening to when the streamer goes offline
-  """
-  def stop_listening_to_stream_offline(client_id, app_access_token, subscription_id) do
-    stop_listening(client_id, app_access_token, subscription_id)
   end
 
   @doc """
@@ -92,13 +64,6 @@ defmodule TwitchApi.EventSub do
       channel,
       "channel.channel_points_custom_reward_redemption.add"
     )
-  end
-
-  @doc """
-  Stop listening to channel points usage
-  """
-  def stop_listening_to_channel_points_used(client_id, app_access_token, subscription_id) do
-    stop_listening(client_id, app_access_token, subscription_id)
   end
 
   defp listen(client_id, app_access_token, callback_url, secret, channel, type) when is_bitstring(channel) do
@@ -130,7 +95,10 @@ defmodule TwitchApi.EventSub do
     end
   end
 
-  defp stop_listening(client_id, app_access_token, subscription_id) do
+  @doc """
+  Stop listening to certain events
+  """
+  def stop_listening(client_id, app_access_token, subscription_id) do
     HTTPoison.start()
 
     headers = [
