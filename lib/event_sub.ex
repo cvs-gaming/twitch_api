@@ -90,8 +90,15 @@ defmodule TwitchApi.EventSub do
     }
 
     case HTTPoison.post("https://api.twitch.tv/helix/eventsub/subscriptions", Jason.encode!(body), headers) do
-      {:ok, %HTTPoison.Response{body: body}} -> {:ok, Jason.decode!(body)}
-      nil -> {:error, "Something went wrong. Are you already listening to this EventSub?"}
+      {:ok, %HTTPoison.Response{body: body}} ->
+        case Jason.decode!(body) do
+          %{"error" => "Conflict"} ->
+            {:error, "Something went wrong. Are you already listening to this EventSub?"}
+          response ->
+            {:ok, response}
+        end
+      nil ->
+        {:error, "Unexected error."}
     end
   end
 
