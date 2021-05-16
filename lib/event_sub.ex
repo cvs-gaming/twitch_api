@@ -200,7 +200,10 @@ defmodule TwitchApi.EventSub do
           end
         )
 
-        stop_listening_to_event_subs_for_uninstalled_channels(client_id, token, get_access_token_closure ,after_stop_listening_closure, cursor)
+        # The final page has no cursor
+        if cursor do
+          stop_listening_to_event_subs_for_uninstalled_channels(client_id, token, get_access_token_closure ,after_stop_listening_closure, cursor)
+        end
     end
   end
 end
