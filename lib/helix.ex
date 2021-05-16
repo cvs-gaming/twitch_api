@@ -175,22 +175,26 @@ defmodule TwitchApi.Helix do
 
     case HTTPoison.get(url, headers) do
       {:ok, %HTTPoison.Response{body: body}} ->
-        %{"data" => data} = Jason.decode!(body)
-
-        data
-        |> Enum.to_list()
-        |> Enum.any?(fn {_name, apps} ->
-          Enum.any?(
-            apps,
-            fn {_key, values} ->
-              case values do
-                %{"id" => id} -> id == client_id
-                _ -> false
-              end
-            end
-          )
-        end)
-
+        case Jason.decode!(body) do
+          %{"data" => data} ->
+            data
+            |> Enum.to_list()
+            |> Enum.any?(
+                 fn {_name, apps} ->
+                   Enum.any?(
+                     apps,
+                     fn {_key, values} ->
+                       case values do
+                         %{"id" => id} -> id == client_id
+                         _ -> false
+                       end
+                     end
+                   )
+                 end
+               )
+          _ ->
+            {:error, "Something went wrong."}
+        end
       _ ->
         {:error, "Something went wrong."}
     end
