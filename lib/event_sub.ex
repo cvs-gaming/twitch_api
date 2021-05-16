@@ -66,7 +66,8 @@ defmodule TwitchApi.EventSub do
     )
   end
 
-  defp listen(client_id, app_access_token, callback_url, secret, channel, type) when is_bitstring(channel) do
+  defp listen(client_id, app_access_token, callback_url, secret, channel, type)
+       when is_bitstring(channel) do
     HTTPoison.start()
 
     headers = [
@@ -85,18 +86,24 @@ defmodule TwitchApi.EventSub do
       transport: %{
         method: "webhook",
         callback: callback_url,
-        secret: secret,
+        secret: secret
       }
     }
 
-    case HTTPoison.post("https://api.twitch.tv/helix/eventsub/subscriptions", Jason.encode!(body), headers) do
+    case HTTPoison.post(
+           "https://api.twitch.tv/helix/eventsub/subscriptions",
+           Jason.encode!(body),
+           headers
+         ) do
       {:ok, %HTTPoison.Response{body: body}} ->
         case Jason.decode!(body) do
           %{"error" => "Conflict"} ->
             {:error, "Something went wrong. Are you already listening to this EventSub?"}
+
           response ->
             {:ok, response}
         end
+
       nil ->
         {:error, "Unexected error."}
     end
@@ -132,14 +139,16 @@ defmodule TwitchApi.EventSub do
       {"Authorization", "Bearer #{app_access_token}"}
     ]
 
-    url = case cursor do
-      nil -> "https://api.twitch.tv/helix/eventsub/subscriptions"
-      _ -> "https://api.twitch.tv/helix/eventsub/subscriptions?after=#{cursor}"
-    end
+    url =
+      case cursor do
+        nil -> "https://api.twitch.tv/helix/eventsub/subscriptions"
+        _ -> "https://api.twitch.tv/helix/eventsub/subscriptions?after=#{cursor}"
+      end
 
     case HTTPoison.get(url, headers) do
       {:ok, %HTTPoison.Response{body: body}} ->
         {:ok, Jason.decode!(body)}
+
       _ ->
         {:error, "Something went wrong."}
     end

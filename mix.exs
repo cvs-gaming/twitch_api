@@ -4,7 +4,7 @@ defmodule TwitchApi.MixProject do
   def project do
     [
       app: :twitch_api,
-      version: "0.1.5",
+      version: "0.1.6",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -24,7 +24,7 @@ defmodule TwitchApi.MixProject do
     [
       {:httpoison, "~> 1.7"},
       {:jason, "~> 1.2"},
-      {:ex_doc, "~> 0.23", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.23", only: :dev, runtime: false}
     ]
   end
 
@@ -32,7 +32,7 @@ defmodule TwitchApi.MixProject do
     [
       licenses: ["Apache-2.0"],
       links: %{
-        "GitHub" => "https://github.com/cvs-gaming/twitch_api",
+        "GitHub" => "https://github.com/cvs-gaming/twitch_api"
       },
       description: "Twitch API library"
     ]

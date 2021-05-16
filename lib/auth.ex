@@ -25,7 +25,8 @@ defmodule TwitchApi.Auth do
 
     body = "&grant_type=client_credentials&client_id=#{client_id}&client_secret=#{client_secret}"
 
-    {:ok, %HTTPoison.Response{body: body}} = HTTPoison.post("https://id.twitch.tv/oauth2/token", body, headers)
+    {:ok, %HTTPoison.Response{body: body}} =
+      HTTPoison.post("https://id.twitch.tv/oauth2/token", body, headers)
 
     {:ok, Jason.decode!(body)}
   end
@@ -63,7 +64,8 @@ defmodule TwitchApi.Auth do
       {"Authorization", "OAuth #{access_token}"}
     ]
 
-    {:ok, %HTTPoison.Response{body: body}} = HTTPoison.get("https://id.twitch.tv/oauth2/validate", headers)
+    {:ok, %HTTPoison.Response{body: body}} =
+      HTTPoison.get("https://id.twitch.tv/oauth2/validate", headers)
 
     {:ok, Jason.decode!(body)}
   end

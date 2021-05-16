@@ -9,11 +9,12 @@ defmodule TwitchApi.Helix do
   Get the user's profile image by their user id (channel)
   """
   def get_user_image_by_user_id!(user_access_token, client_id, user_id) do
-    {:ok, %{"data" => [%{"profile_image_url" => image}]}} = get_user_info_by_user_id!(
-      user_access_token,
-      client_id,
-      user_id
-    )
+    {:ok, %{"data" => [%{"profile_image_url" => image}]}} =
+      get_user_info_by_user_id!(
+        user_access_token,
+        client_id,
+        user_id
+      )
 
     image
   end
@@ -22,11 +23,12 @@ defmodule TwitchApi.Helix do
   Get the username by their user id (channel)
   """
   def get_username_by_user_id!(user_access_token, client_id, user_id) do
-    {:ok, %{"data" => [%{"display_name" => display_name}]}} = get_user_info_by_user_id!(
-      user_access_token,
-      client_id,
-      user_id
-    )
+    {:ok, %{"data" => [%{"display_name" => display_name}]}} =
+      get_user_info_by_user_id!(
+        user_access_token,
+        client_id,
+        user_id
+      )
 
     display_name
   end
@@ -87,7 +89,9 @@ defmodule TwitchApi.Helix do
 
     {:ok, %HTTPoison.Response{body: body}} =
       HTTPoison.get(
-        "https://api.twitch.tv/helix/moderation/banned?broadcaster_id=#{channel}&user_id=#{user_id}",
+        "https://api.twitch.tv/helix/moderation/banned?broadcaster_id=#{channel}&user_id=#{
+          user_id
+        }",
         headers
       )
 
@@ -133,21 +137,62 @@ defmodule TwitchApi.Helix do
   @doc """
   Create a channel points icon on a channel
   """
-  def create_channel_points_custom_reward(client_id, user_access_token, user_id, title, cost) when is_bitstring(cost) do
+  def create_channel_points_custom_reward(client_id, user_access_token, user_id, title, cost)
+      when is_bitstring(cost) do
     headers = [
       {"Content-Type", "application/json"},
       {"Client-Id", client_id},
-      {"Authorization", "Bearer #{user_access_token}"},
+      {"Authorization", "Bearer #{user_access_token}"}
     ]
 
     body = %{
       title: title,
-      cost: cost,
+      cost: cost
     }
 
-    case HTTPoison.post("https://api.twitch.tv/helix/channel_points/custom_rewards?broadcaster_id=#{user_id}", Jason.encode!(body), headers) do
+    case HTTPoison.post(
+           "https://api.twitch.tv/helix/channel_points/custom_rewards?broadcaster_id=#{user_id}",
+           Jason.encode!(body),
+           headers
+         ) do
       {:ok, %HTTPoison.Response{body: body}} -> {:ok, Jason.decode!(body)}
       nil -> {:error, "Something went wrong."}
+    end
+  end
+
+  @doc """
+  Check whether the extension is installed for a user
+  """
+  def is_installed?(client_id, access_token) do
+    HTTPoison.start()
+
+    headers = [
+      {"Client-ID", client_id},
+      {"Authorization", "Bearer #{access_token}"}
+    ]
+
+    url = "https://api.twitch.tv/helix/users/extensions"
+
+    case HTTPoison.get(url, headers) do
+      {:ok, %HTTPoison.Response{body: body}} ->
+        %{"data" => data} = Jason.decode!(body)
+
+        data
+        |> Enum.to_list()
+        |> Enum.any?(fn {_name, apps} ->
+          Enum.any?(
+            apps,
+            fn {_key, values} ->
+              case values do
+                %{"id" => id} -> id == client_id
+                _ -> false
+              end
+            end
+          )
+        end)
+
+      _ ->
+        {:error, "Something went wrong."}
     end
   end
 end
