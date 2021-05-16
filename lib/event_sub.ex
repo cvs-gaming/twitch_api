@@ -124,7 +124,7 @@ defmodule TwitchApi.EventSub do
 
   There is a maximum, so make sure to stop listening at some point
   """
-  def list_event_subs(client_id, app_access_token) do
+  def list_event_subs(client_id, app_access_token, cursor \\ nil) do
     HTTPoison.start()
 
     headers = [
@@ -132,7 +132,12 @@ defmodule TwitchApi.EventSub do
       {"Authorization", "Bearer #{app_access_token}"}
     ]
 
-    case HTTPoison.get("https://api.twitch.tv/helix/eventsub/subscriptions", headers) do
+    url = case cursor do
+      nil -> "https://api.twitch.tv/helix/eventsub/subscriptions"
+      _ -> "https://api.twitch.tv/helix/eventsub/subscriptions?after=#{cursor}"
+    end
+
+    case HTTPoison.get(url, headers) do
       {:ok, %HTTPoison.Response{body: body}} ->
         {:ok, Jason.decode!(body)}
       _ ->
