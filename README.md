@@ -7,7 +7,7 @@ https://hexdocs.pm/twitch_api
 ```elixir
 def deps do
   [
-    {:twitch_api, "~> 0.1.7"}
+    {:twitch_api, "~> 0.1.8"}
   ]
 end
 ```

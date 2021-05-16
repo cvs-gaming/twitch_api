@@ -191,7 +191,7 @@ defmodule TwitchApi.EventSub do
                     # You might want to do some other logic here as well, like deleting the access token as well
                     after_stop_listening_closure.(broadcaster_user_id)
 
-                  true ->
+                  _ ->
                     nil
                 end
               _ ->
