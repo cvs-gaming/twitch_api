@@ -157,10 +157,9 @@ defmodule TwitchApi.EventSub do
   @doc """
   Stop listening to all the event sub channels that have no longer installed the extension
 
-  Use the get_access_token_closure(channel) closure to get the access token for the broadcaster_user_id (channel)
   Use after_stop_listening_closure(channel) to add additional logic after we've stopped listening to an event sub
   """
-  def stop_listening_to_event_subs_for_uninstalled_channels(client_id, token, get_access_token_closure, after_stop_listening_closure, cursor \\ nil) do
+  def stop_listening_to_event_subs_for_uninstalled_channels(client_id, token, after_stop_listening_closure, cursor \\ nil) do
     case list_event_subs(client_id, token, cursor) do
       {
         :ok,
@@ -181,10 +180,7 @@ defmodule TwitchApi.EventSub do
                   "broadcaster_user_id" => broadcaster_user_id
                 }
               } ->
-                # Get the access token
-                access_token = get_access_token_closure.(broadcaster_user_id)
-
-                case TwitchApi.Helix.is_installed?(client_id, access_token) do
+                case TwitchApi.Helix.is_installed?(client_id, token, broadcaster_user_id) do
                   false ->
                     TwitchApi.EventSub.stop_listening(client_id, token, id)
 

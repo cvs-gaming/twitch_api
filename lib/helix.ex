@@ -162,6 +162,7 @@ defmodule TwitchApi.Helix do
 
   @doc """
   Check whether the extension is installed for a user
+  Using the user access token directly
   """
   def is_installed?(client_id, access_token) do
     HTTPoison.start()
@@ -172,6 +173,47 @@ defmodule TwitchApi.Helix do
     ]
 
     url = "https://api.twitch.tv/helix/users/extensions"
+
+    case HTTPoison.get(url, headers) do
+      {:ok, %HTTPoison.Response{body: body}} ->
+        case Jason.decode!(body) do
+          %{"data" => data} ->
+            data
+            |> Enum.to_list()
+            |> Enum.any?(
+                 fn {_name, apps} ->
+                   Enum.any?(
+                     apps,
+                     fn {_key, values} ->
+                       case values do
+                         %{"id" => id} -> id == client_id
+                         _ -> false
+                       end
+                     end
+                   )
+                 end
+               )
+          _ ->
+            {:error, "Something went wrong."}
+        end
+      _ ->
+        {:error, "Something went wrong."}
+    end
+  end
+
+  @doc """
+  Check whether the extension is installed for a user
+  Using the extensions app_access_token
+  """
+  def is_installed?(client_id, app_access_token, user_id) do
+    HTTPoison.start()
+
+    headers = [
+      {"Client-ID", client_id},
+      {"Authorization", "Bearer #{app_access_token}"}
+    ]
+
+    url = "https://api.twitch.tv/helix/users/extensions?user_id#{user_id}"
 
     case HTTPoison.get(url, headers) do
       {:ok, %HTTPoison.Response{body: body}} ->
