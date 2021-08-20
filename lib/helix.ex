@@ -213,7 +213,7 @@ defmodule TwitchApi.Helix do
       {"Authorization", "Bearer #{app_access_token}"}
     ]
 
-    url = "https://api.twitch.tv/helix/users/extensions?user_id#{user_id}"
+    url = "https://api.twitch.tv/helix/users/extensions?user_id=#{user_id}"
 
     case HTTPoison.get(url, headers) do
       {:ok, %HTTPoison.Response{body: body}} ->
