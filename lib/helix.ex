@@ -8,11 +8,11 @@ defmodule TwitchApi.Helix do
   @doc """
   Get the user's profile image by their user id (channel)
   """
-  def get_user_image_by_user_id!(user_access_token, client_id, user_id) do
+  def get_user_image_by_user_id!(client_id, app_access_token, user_id) do
     {:ok, %{"data" => [%{"profile_image_url" => image}]}} =
       get_user_info_by_user_id!(
-        user_access_token,
         client_id,
+        app_access_token,
         user_id
       )
 
@@ -22,11 +22,11 @@ defmodule TwitchApi.Helix do
   @doc """
   Get the username by their user id (channel)
   """
-  def get_username_by_user_id!(user_access_token, client_id, user_id) do
+  def get_username_by_user_id!(client_id, app_access_token, user_id) do
     {:ok, %{"data" => [%{"display_name" => display_name}]}} =
       get_user_info_by_user_id!(
-        user_access_token,
         client_id,
+        app_access_token,
         user_id
       )
 
@@ -59,12 +59,12 @@ defmodule TwitchApi.Helix do
   }
   ```
   """
-  def get_user_info_by_user_id!(user_access_token, client_id, user_id) do
+  def get_user_info_by_user_id!(client_id, app_access_token, user_id) do
     HTTPoison.start()
 
     headers = [
       {"Client-Id", client_id},
-      {"Authorization", "Bearer #{user_access_token}"}
+      {"Authorization", "Bearer #{app_access_token}"}
     ]
 
     {:ok, %HTTPoison.Response{body: body}} =
@@ -79,7 +79,7 @@ defmodule TwitchApi.Helix do
   @doc """
   Check whether this user is banned for a channel
   """
-  def is_banned_for_channel?(user_access_token, client_id, channel, user_id) do
+  def is_banned_for_channel?(client_id, user_access_token, channel, user_id) do
     HTTPoison.start()
 
     headers = [
@@ -105,12 +105,12 @@ defmodule TwitchApi.Helix do
   @doc """
   Is the user or streamer live?
   """
-  def is_live?(user_access_token, client_id, user_id) do
+  def is_live?(client_id, app_access_token, user_id) do
     HTTPoison.start()
 
     headers = [
       {"Client-Id", client_id},
-      {"Authorization", "Bearer #{user_access_token}"}
+      {"Authorization", "Bearer #{app_access_token}"}
     ]
 
     response =
@@ -237,6 +237,34 @@ defmodule TwitchApi.Helix do
           _ ->
             {:error, "Something went wrong."}
         end
+      _ ->
+        {:error, "Something went wrong."}
+    end
+  end
+
+  @doc """
+  List all live streams
+  """
+  def list_streamers(client_id, app_access_token, page_size \\ 10, cursor \\ nil) do
+    HTTPoison.start()
+
+    headers = [
+      {"Client-ID", client_id},
+      {"Authorization", "Bearer #{app_access_token}"}
+    ]
+
+    url = "https://api.twitch.tv/helix/streams?type=live&first=#{page_size}"
+
+    url =
+      case cursor do
+        nil -> url
+        _ -> "#{url}&after=#{cursor}"
+      end
+
+    case HTTPoison.get(url, headers) do
+      {:ok, %HTTPoison.Response{body: body}} ->
+        {:ok, Jason.decode!(body)}
+
       _ ->
         {:error, "Something went wrong."}
     end

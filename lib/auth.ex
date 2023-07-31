@@ -43,7 +43,7 @@ defmodule TwitchApi.Auth do
 
   Example:
   ```
-  def authorize(conn, %{"access_token" => access_token})
+  def get_user_access_token(conn, %{"access_token" => access_token})
      {:ok, %{
        "client_id": _,
        "login": _,

@@ -22,7 +22,7 @@ defmodule TwitchApi.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:httpoison, "~> 1.7"},
+      {:httpoison, "~> 2.1"},
       {:jason, "~> 1.2"},
       {:ex_doc, "~> 0.23", only: :dev, runtime: false}
     ]

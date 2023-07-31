@@ -105,7 +105,7 @@ defmodule TwitchApi.EventSub do
         end
 
       nil ->
-        {:error, "Unexected error."}
+        {:error, "Unexpected error."}
     end
   end
 
